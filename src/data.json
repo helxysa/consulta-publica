@@ -1,0 +1,126 @@
+{
+  "consultas": [
+    {
+      "id": "1",
+      "titulo": "Política de Atendimento às Vítimas de Violência Doméstica",
+      "descricao": "Consulta pública para colher sugestões sobre a nova política de atendimento às vítimas de violência doméstica no estado do Amapá.",
+      "unidadeResponsavel": "Promotoria de Justiça de Defesa da Mulher",
+      "categoria": "Proteção de Direitos",
+      "periodo": "31/01/2025 - 31/05/2025",
+      "status": "Encerrada",
+      "diasRestantes": 12,
+      "documentoReferencia": "documento-referencia-violencia-domestica.pdf",
+      "perguntas": [
+        "Quais medidas você considera prioritárias para o atendimento às vítimas de violência doméstica?",
+        "Como o Ministério Público pode melhorar o acolhimento inicial das vítimas?",
+        "Quais parcerias institucionais você sugere para fortalecer a rede de proteção?"
+      ],
+      "pgaRelacionado": "PGA 2025 - Combate à Violência Doméstica",
+      "origemSolicitacao": "Gabinete do Procurador-Geral, Ofício nº 123/2025",
+      "moderacao": "aprovada"
+    },
+    {
+      "id": "2",
+      "titulo": "Diretrizes para Correições Ordinárias",
+      "descricao": "Consulta para receber contribuições da sociedade civil sobre as diretrizes que nortearão as correições ordinárias realizadas pela Corregedoria-Geral do Ministério Público.",
+      "unidadeResponsavel": "Corregedoria-Geral",
+      "categoria": "Transparência Institucional",
+      "periodo": "15/02/2025 - 15/04/2025",
+      "status": "Encerrada",
+      "diasRestantes": 45,
+      "documentoReferencia": "documento-referencia-correicoes.pdf",
+      "perguntas": [
+        "Quais aspectos você considera mais importantes a serem verificados durante as correições?",
+        "Como podemos tornar o processo de correição mais transparente para a sociedade?",
+        "Que mecanismos de participação social poderiam ser implementados no processo de correição?"
+      ],
+      "pgaRelacionado": "PGA 2025 - Transparência e Dados Abertos",
+      "origemSolicitacao": "Corregedoria-Geral, Memorando nº 45/2025",
+      "moderacao": "aprovada"
+    },
+    {
+      "id": "3",
+      "titulo": "Proteção de Dados Pessoais em Serviços Públicos",
+      "descricao": "Consulta sobre as práticas de proteção de dados pessoais nos serviços públicos do estado do Amapá, visando adequação à LGPD.",
+      "unidadeResponsavel": "Encarregado de Dados",
+      "categoria": "Proteção de Dados",
+      "periodo": "01/03/2025 - 30/04/2025",
+      "status": "Encerrada",
+      "diasRestantes": 60,
+      "documentoReferencia": "documento-referencia-lgpd.pdf",
+      "perguntas": [
+        "Quais medidas de segurança você considera essenciais para proteger dados pessoais em serviços públicos?",
+        "Como podemos melhorar a transparência sobre o uso de dados pessoais pelo poder público?",
+        "Quais são os principais riscos à privacidade que você identifica nos serviços públicos atuais?"
+      ],
+      "pgaRelacionado": "PGA 2025 - Proteção de Dados e Privacidade",
+      "origemSolicitacao": "Encarregado de Dados, Ofício nº 78/2025",
+      "moderacao": "aprovada"
+    },
+    {
+      "id": "4",
+      "titulo": "Política de Mobilidade Urbana Sustentável",
+      "descricao": "Consulta pública para colher sugestões sobre a nova política de mobilidade urbana sustentável para os municípios do estado do Amapá.",
+      "unidadeResponsavel": "Promotoria de Justiça de Meio Ambiente",
+      "categoria": "Meio Ambiente",
+      "dataInicio": "2025-06-01",
+      "dataFim": "2025-07-31",
+      "periodo": "01/06/2025 - 31/07/2025",
+      "status": "Encerrada",
+      "documentoReferencia": "documento-referencia-mobilidade.pdf",
+      "perguntas": [
+        "Quais são os principais problemas de mobilidade urbana em sua cidade?",
+        "Que medidas você sugere para incentivar o uso de transportes sustentáveis?",
+        "Como podemos melhorar a acessibilidade para pessoas com deficiência no transporte público?"
+      ],
+      "pgaRelacionado": "PGA 2025 - Proteção Ambiental",
+      "origemSolicitacao": "Promotoria de Justiça de Meio Ambiente, Memorando nº 32/2025",
+      "dataEnvio": "2025-05-15T14:30:00.000Z",
+      "moderacao": "aprovada",
+      "diasRestantes": 72
+    },
+    {
+      "id": "1747753789195",
+      "titulo": "teste",
+      "descricao": "teste",
+      "unidadeResponsavel": "Promotoria de Justiça de Defesa da Mulher",
+      "categoria": "Proteção de Direitos",
+      "dataInicio": "2025-05-01",
+      "dataFim": "2025-05-29",
+      "periodo": "30/04/2025 - 28/05/2025",
+      "status": "Ativa",
+      "documentoReferencia": null,
+      "perguntas": [
+        "teste"
+      ],
+      "pgaRelacionado": "teste",
+      "origemSolicitacao": "teste",
+      "dataEnvio": "2025-05-20T15:09:49.195Z",
+      "moderacao": "aprovada",
+      "diasRestantes": 9
+    }
+  ],
+  "consultasPendentes": [],
+  "consultasRejeitadas": [
+    {
+      "id": "1747757018296",
+      "titulo": "Consulta sei la o que",
+      "descricao": "Consulta sei la oq",
+      "unidadeResponsavel": "Promotoria de Justiça de Meio Ambiente",
+      "categoria": "Meio Ambiente",
+      "dataInicio": "2025-05-08",
+      "dataFim": "2025-05-23",
+      "periodo": "07/05/2025 - 22/05/2025",
+      "status": "Pendente de Moderação",
+      "documentoReferencia": null,
+      "perguntas": [
+        "tesdfs"
+      ],
+      "pgaRelacionado": "pga 203030",
+      "origemSolicitacao": "ex asodasda",
+      "dataEnvio": "2025-05-20T16:03:38.296Z",
+      "moderacao": "rejeitada",
+      "motivoRejeicao": "asdadsads"
+    }
+  ]
+}
