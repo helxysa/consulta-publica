@@ -17,37 +17,41 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Ler o arquivo de dados atual
-    const fileData = await fs.readFile(dataFilePath, 'utf8');
-    const data = JSON.parse(fileData);
+    const formData = await request.formData();
     
-    // Obter a nova consulta do corpo da requisição
-    const novaConsulta = await request.json();
-    
-    // Garantir que o ID seja único
-    if (!novaConsulta.id) {
-      novaConsulta.id = nanoid();
-    }
-    
-    // Adicionar a data de envio
-    if (!novaConsulta.dataEnvio) {
-      novaConsulta.dataEnvio = new Date().toISOString();
-    }
-    
-    // Definir status e moderação como pendentes
-    novaConsulta.status = 'Pendente de Moderação';
-    novaConsulta.moderacao = 'pendente';
-    
-    // Adicionar a nova consulta à lista de consultas pendentes
+    // Criar objeto de consulta
+    const novaConsulta = {
+      id: nanoid(),
+      titulo: formData.get('titulo'),
+      descricao: formData.get('descricao'),
+      unidadeResponsavel: formData.get('unidadeResponsavel'),
+      categoria: formData.get('categoria'),
+      dataInicio: formData.get('dataInicio'),
+      dataFim: formData.get('dataFim'),
+      pgaRelacionado: formData.get('pgaRelacionado'),
+      origemSolicitacao: formData.get('origemSolicitacao'),
+      perguntas: JSON.parse(formData.get('perguntas') as string),
+      documentoReferencia: (formData.get('documento') as File)?.name || null,
+      status: 'Pendente de Moderação',
+      dataEnvio: new Date().toISOString(),
+      moderacao: 'pendente'
+    };
+
+    // Ler e atualizar dados
+    const data = JSON.parse(await fs.readFile(dataFilePath, 'utf8'));
+    data.consultasPendentes = data.consultasPendentes || [];
     data.consultasPendentes.push(novaConsulta);
     
-    // Salvar o arquivo atualizado
-    await fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), 'utf8');
+    // Salvar arquivo
+    await fs.writeFile(dataFilePath, JSON.stringify(data, null, 2));
     
     return NextResponse.json({ success: true, consulta: novaConsulta }, { status: 201 });
   } catch (error) {
     console.error('Erro ao salvar consulta:', error);
-    return NextResponse.json({ error: 'Erro ao salvar consulta' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Erro ao processar a consulta' },
+      { status: 500 }
+    );
   }
 }
 

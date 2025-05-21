@@ -83,45 +83,42 @@ export default function SolicitantePage() {
     if (!validateForm()) return;
     
     try {
-      // Formatar as datas para exibição
-      const dataInicioFormatada = formatarData(formData.dataInicio);
-      const dataFimFormatada = formatarData(formData.dataFim);
-      const periodo = `${dataInicioFormatada} - ${dataFimFormatada}`;
+      // Criar FormData para envio de arquivo
+      const formDataToSend = new FormData();
+      formDataToSend.append('titulo', formData.titulo);
+      formDataToSend.append('descricao', formData.descricao);
+      formDataToSend.append('unidadeResponsavel', formData.unidadeResponsavel);
+      formDataToSend.append('categoria', formData.categoria);
+      formDataToSend.append('dataInicio', formData.dataInicio);
+      formDataToSend.append('dataFim', formData.dataFim);
+      formDataToSend.append('pgaRelacionado', formData.pgaRelacionado);
+      formDataToSend.append('origemSolicitacao', formData.origemSolicitacao);
+      formDataToSend.append('perguntas', JSON.stringify(perguntas));
       
-      // Preparar o objeto da consulta
-      const novaConsulta = {
-        id: Date.now().toString(), // Gerar ID único baseado no timestamp
-        titulo: formData.titulo,
-        descricao: formData.descricao,
-        unidadeResponsavel: formData.unidadeResponsavel,
-        categoria: formData.categoria,
-        dataInicio: formData.dataInicio,
-        dataFim: formData.dataFim,
-        periodo,
-        status: 'Pendente de Moderação',
-        documentoReferencia: formData.documentoReferencia ? formData.documentoReferencia.name : null,
-        perguntas,
-        pgaRelacionado: formData.pgaRelacionado,
-        origemSolicitacao: formData.origemSolicitacao,
-        dataEnvio: new Date().toISOString(),
-        moderacao: 'pendente'
-      };
-      
+      if (formData.documentoReferencia) {
+        formDataToSend.append('documento', formData.documentoReferencia);
+      }
+
       // Enviar para a API
       const response = await fetch('/api/consultas', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(novaConsulta)
+        body: formDataToSend
       });
+      
+      const result = await response.json();
       
       if (response.ok) {
         setEnviado(true);
       } else {
-        throw new Error('Falha ao enviar consulta');
+        throw new Error(result.error || 'Falha ao enviar consulta');
       }
     } catch (error) {
       console.error('Erro ao enviar consulta:', error);
-      alert('Ocorreu um erro ao enviar a consulta. Por favor, tente novamente.');
+      if (error instanceof Error) {
+        alert(error.message || 'Ocorreu um erro ao enviar a consulta. Por favor, tente novamente.');
+      } else {
+        alert('Ocorreu um erro ao enviar a consulta. Por favor, tente novamente.');
+      }
     }
   };
 
