@@ -2,8 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import ConsultasAprovadas from './ConsultasAprovadas';
+import ConsultasRejeitadas from './ConsultasRejeitadas';
+import ConsultasPendentes from './ConsultasPendentes';
 
-type Consulta = {
+export type Consulta = {
   motivoRejeicao: string;
   id: string;
   titulo: string;
@@ -17,10 +20,15 @@ type Consulta = {
   perguntas?: string[];
 };
 
-export default function MinhasConsultas() {
+type Props = {
+  defaultTab?: 'aprovadas' | 'rejeitadas' | 'pendentes';
+};
+
+export default function MinhasConsultas({ defaultTab = 'aprovadas' }: Props) {
   const [minhasConsultas, setMinhasConsultas] = useState<Consulta[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab] = useState<'aprovadas' | 'rejeitadas' | 'pendentes'>(defaultTab);
 
   useEffect(() => {
     const fetchConsultas = async () => {
@@ -89,8 +97,13 @@ export default function MinhasConsultas() {
     });
   };
 
+  // Filtra as consultas
+  const aprovadas = minhasConsultas.filter(c => c.moderacao === 'aprovada');
+  const rejeitadas = minhasConsultas.filter(c => c.moderacao === 'rejeitada');
+  const pendentes = minhasConsultas.filter(c => c.moderacao === 'pendente');
+
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4">
+    <div className="max-w-6xl mx-auto">
       {/* Breadcrumb */}
       <div className="flex items-center mb-6 text-sm">
         <Link href="/inicio" className="text-blue-600 hover:underline flex items-center">
@@ -106,7 +119,11 @@ export default function MinhasConsultas() {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#0c2b7a] mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          <h1 className="text-2xl font-bold text-[#0c2b7a]">Minhas Consultas</h1>
+          <h1 className="text-2xl font-bold text-[#0c2b7a]">
+            {activeTab === 'aprovadas' && 'Consultas Aprovadas'}
+            {activeTab === 'rejeitadas' && 'Consultas Rejeitadas'}
+            {activeTab === 'pendentes' && 'Consultas Pendentes'}
+          </h1>
         </div>
         <Link 
           href="/demandante/nova-consulta" 
@@ -138,67 +155,11 @@ export default function MinhasConsultas() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-6">
-          {minhasConsultas.map((consulta) => (
-            <div key={consulta.id} className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
-              <div className={`border-t-4 ${
-                consulta.moderacao === 'aprovada' ? 'border-green-500' : 
-                consulta.moderacao === 'rejeitada' ? 'border-red-500' : 
-                'border-yellow-500'
-              }`}></div>
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-xl font-bold text-[#0c2b7a]">{consulta.titulo}</h2>
-                  {getStatusBadge(consulta)}
-                </div>
-                
-                <p className="text-gray-700 mb-4">{consulta.descricao}</p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-sm text-gray-600"><span className="font-medium">Unidade Responsável:</span> {consulta.unidadeResponsavel}</p>
-                    <p className="text-sm text-gray-600"><span className="font-medium">Categoria:</span> {consulta.categoria}</p>
-                    <p className="text-sm text-gray-600"><span className="font-medium">Período:</span> {consulta.periodo}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600"><span className="font-medium">Data de Envio:</span> {formatarData(consulta.dataEnvio)}</p>
-                    <p className="text-sm text-gray-600"><span className="font-medium">Status:</span> {consulta.status}</p>
-                  </div>
-                </div>
-                
-                {consulta.perguntas && consulta.perguntas.length > 0 && (
-                  <div className="mb-4">
-                    <h3 className="font-medium text-gray-800 mb-2">Perguntas:</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      {consulta.perguntas.map((pergunta, index) => (
-                        <li key={index} className="text-sm text-gray-700">{pergunta}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                
-                {consulta.moderacao === 'rejeitada' && (
-                  <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-md">
-                    <p className="text-sm text-red-800">
-                      <span className="font-medium">Feedback da moderação:</span> {consulta.motivoRejeicao || 'Esta consulta foi rejeitada. Você pode criar uma nova consulta corrigindo os problemas identificados.'}
-                    </p>
-                  </div>
-                )}
-                
-                {consulta.moderacao === 'aprovada' && (
-                  <div className="mt-4 flex justify-end">
-                    <Link 
-                      href={`/consulta/${consulta.id}`}
-                      className="bg-[#0c2b7a] text-white hover:bg-[#0a2266] font-medium py-2 px-4 rounded transition"
-                    >
-                      Ver Detalhes
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        <>
+          {activeTab === 'aprovadas' && <ConsultasAprovadas consultas={aprovadas} formatarData={formatarData} />}
+          {activeTab === 'rejeitadas' && <ConsultasRejeitadas consultas={rejeitadas} formatarData={formatarData} />}
+          {activeTab === 'pendentes' && <ConsultasPendentes consultas={pendentes} formatarData={formatarData} />}
+        </>
       )}
     </div>
   );
