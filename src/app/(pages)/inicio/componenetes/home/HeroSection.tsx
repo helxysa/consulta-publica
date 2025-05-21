@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ConsultaType } from '@/app/types/consulta';
 
 export default function Home() {
-  const [consultasData, setConsultasData] = useState<Record<string, ConsultaType>>({});
+  const [consultasData, setConsultasData] = useState<ConsultaType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,13 +22,14 @@ export default function Home() {
         
         const data = await response.json();
         
-        // Converter o array de consultas para um objeto com ID como chave
-        const consultasObj: Record<string, ConsultaType> = {};
-        data.consultas.forEach((consulta: ConsultaType) => {
-          consultasObj[consulta.id] = consulta;
-        });
-        
-        setConsultasData(consultasObj);
+        // Ordenar consultas por data mais recente e pegar as 3 primeiras
+        const consultasRecentes = data
+          .sort((a: ConsultaType, b: ConsultaType) => 
+            new Date(b.dataEnvio).getTime() - new Date(a.dataEnvio).getTime()
+          )
+          .slice(0, 3);
+
+        setConsultasData(consultasRecentes);
       } catch (err) {
         console.error('Erro ao buscar consultas:', err);
         setError('Não foi possível carregar as consultas. Tente novamente mais tarde.');
@@ -137,25 +138,29 @@ export default function Home() {
             <div className="text-center py-8 text-red-500">
               <p>{error}</p>
             </div>
-          ) : Object.keys(consultasData).length === 0 ? (
+          ) : Array.isArray(consultasData) && consultasData.length === 0 ? (
             <div className="text-center py-8">
               <p>Nenhuma consulta disponível no momento.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {Object.entries(consultasData).slice(0, 3).map(([id, consulta]) => (
-                <div key={id} className="bg-[#f0f2f5] rounded-lg overflow-hidden">
+              {consultasData.map((consulta: ConsultaType) => (
+                <div key={consulta.id} className="bg-[#f0f2f5] rounded-lg overflow-hidden">
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-2 text-[#0c2b7a]">{consulta.titulo}</h3>
                     <p className="text-sm text-gray-700 mb-4">
-                      {consulta.descricao.length > 100
-                        ? `${consulta.descricao.substring(0, 100)}...`
-                        : consulta.descricao}
+                      {consulta.descricao?.substring(0, 100) || 'Descrição não disponível'}...
                     </p>
                     <div className="text-sm text-gray-600 mb-3">
                       {consulta.unidadeResponsavel}
                     </div>
-                    <Link href={`/inicio/participante/consulta/${id}`} className="text-[#0c2b7a] font-medium hover:underline">
+                    <div className="text-xs text-gray-500 mb-2">
+                      {new Date(consulta.dataEnvio).toLocaleDateString('pt-BR')}
+                    </div>
+                    <Link 
+                      href={`/inicio/participante/consulta/${consulta.id}`} 
+                      className="text-[#0c2b7a] font-medium hover:underline"
+                    >
                       Participar →
                     </Link>
                   </div>

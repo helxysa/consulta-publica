@@ -1,5 +1,6 @@
 // Tipo para as consultas
 export type ConsultaType = {
+  dataEnvio: string | number | Date;
   perguntas: any;
   moderacao: string;
   id: string;
