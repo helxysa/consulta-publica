@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 // Tipo para as consultas
 export interface ConsultaType {
   periodo: ReactNode;
