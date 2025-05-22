@@ -41,7 +41,11 @@ export default function ModeradorPendentes() {
       }
 
       const data = await response.json();
-      setConsultasPendentes(data.consultasPendentes || []);
+      // Filter consultas where moderacao is 'pendente'
+      const pendentes = data.consultas.filter((consulta: Consulta) => 
+        consulta.moderacao === 'pendente'
+      );
+      setConsultasPendentes(pendentes);
     } catch (err) {
       console.error('Erro ao buscar consultas pendentes:', err);
       setError('Não foi possível carregar as consultas pendentes. Tente novamente mais tarde.');

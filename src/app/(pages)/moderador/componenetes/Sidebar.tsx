@@ -13,6 +13,27 @@ export default function Sidebar({ activeTab }: SidebarProps) {
         <h2 className="text-lg font-bold text-[#0c2b7a]">Painel do Moderador</h2>
       </div>
       <nav className="p-4">
+        <Link
+          href="/inicio"
+          className="flex items-center p-3 rounded-md transition-colors text-gray-700 hover:bg-gray-100 mb-4"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          <span>Voltar</span>
+        </Link>
+
         <ul className="space-y-2">
           <li>
             <Link

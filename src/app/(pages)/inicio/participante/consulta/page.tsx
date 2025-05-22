@@ -2,11 +2,44 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ConsultaType } from '@/app/types/consulta';
+import dadosJson from '@/app/data.json'; // Renomeado para evitar conflito
+
+// Definindo os tipos baseados na estrutura do data.json
+type Contribuicao = {
+  id: string;
+  consultaId: string;
+  nome: string;
+  email: string;
+  cpfCnpj: string;
+  data: string;
+  contribuicao: string;
+  respostas: {
+    [key: string]: string;
+  };
+};
+
+type ConsultaType = {
+  id: string;
+  titulo: string;
+  descricao: string;
+  unidadeResponsavel: string;
+  categoria: string;
+  dataInicio: string;
+  dataFim: string;
+  periodo: string;
+  status: string;
+  documentoReferencia: string | null;
+  perguntas: string[];
+  pgaRelacionado: string;
+  origemSolicitacao: string;
+  dataEnvio: string;
+  moderacao: string;
+  diasRestantes?: number;
+};
 
 export default function ConsultasPage() {
   const [consultasData, setConsultasData] = useState<ConsultaType[]>([]);
-  const [contribuicoes, setContribuicoes] = useState<any[]>([]);
+  const [contribuicoes, setContribuicoes] = useState<Contribuicao[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filtros, setFiltros] = useState({
@@ -16,34 +49,32 @@ export default function ConsultasPage() {
   });
 
   useEffect(() => {
-    const fetchConsultas = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/consultas');
-        
-        if (!response.ok) {
-          throw new Error('Falha ao carregar consultas');
-        }
-        
-        const data = await response.json();
-        
-        // Filtrar apenas consultas aprovadas
-        const consultasAprovadas = data.consultas.filter(
-          (consulta: ConsultaType) => consulta.moderacao === 'aprovada'
-        );
-        
-        setConsultasData(consultasAprovadas);
-        // Guardar as contribuições
-        setContribuicoes(data.contribuicoes || []);
-      } catch (err) {
-        console.error('Erro ao buscar consultas:', err);
-        setError('Não foi possível carregar as consultas. Tente novamente mais tarde.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchConsultas();
+    try {
+      setLoading(true);
+      
+      // Acessar corretamente os dados do JSON
+      console.log('Dados brutos:', dadosJson); // Debug
+      
+      // Verificar se existem consultas e filtrar as aprovadas
+      const todasConsultas = dadosJson.consultas || [];
+      console.log('Todas consultas:', todasConsultas); // Debug
+      
+      const consultasAprovadas = todasConsultas.filter(
+        (consulta: ConsultaType) => consulta.moderacao === 'aprovada'
+      );
+      
+      console.log('Consultas aprovadas:', consultasAprovadas); // Debug
+      setConsultasData(consultasAprovadas);
+      
+      // Setar contribuições
+      setContribuicoes(dadosJson.contribuicoes || []);
+      
+    } catch (err) {
+      console.error('Erro ao carregar dados:', err);
+      setError('Não foi possível carregar as consultas. Tente novamente mais tarde.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // Contar contribuições para cada consulta
@@ -52,11 +83,16 @@ export default function ConsultasPage() {
   };
 
   // Filtrar consultas com base nos filtros selecionados
-  const consultasFiltradas = consultasData.filter(consulta => 
-    (filtros.categoria === 'Todas' || consulta.categoria === filtros.categoria) &&
-    (filtros.unidade === 'Todas' || consulta.unidadeResponsavel === filtros.unidade) &&
-    (filtros.status === 'Todas' || consulta.status === filtros.status)
-  );
+  const consultasFiltradas = consultasData.filter(consulta => {
+    console.log('Filtrando consulta:', consulta); // Debug
+    return (
+      (filtros.categoria === 'Todas' || consulta.categoria === filtros.categoria) &&
+      (filtros.unidade === 'Todas' || consulta.unidadeResponsavel === filtros.unidade) &&
+      (filtros.status === 'Todas' || consulta.status === filtros.status)
+    );
+  });
+
+  console.log('Consultas filtradas:', consultasFiltradas); // Debug
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">

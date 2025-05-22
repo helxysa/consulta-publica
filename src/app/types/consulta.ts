@@ -1,17 +1,21 @@
 // Tipo para as consultas
-export type ConsultaType = {
-  dataEnvio: string | number | Date;
-  perguntas: any;
-  moderacao: string;
-  id: string;
+export interface ConsultaType {
+  periodo: ReactNode;
+  diasRestantes: ReactNode;
+  id?: string;
   titulo: string;
   descricao: string;
   unidadeResponsavel: string;
   categoria: string;
-  periodo: string;
+  dataInicio: string;
+  dataFim: string;
+  pgaRelacionado?: string;
+  origemSolicitacao: string;
+  perguntas: string[];
+  documentoReferencia?: string | null;
   status: string;
-  diasRestantes: number;
-  documentoReferencia: string;
-};
+  dataEnvio: string;
+  moderacao: string;
+}
 
 

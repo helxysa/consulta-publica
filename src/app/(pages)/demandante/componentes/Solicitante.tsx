@@ -83,23 +83,26 @@ export default function SolicitantePage() {
     if (!validateForm()) return;
     
     try {
-      const consultaData = {
-        titulo: formData.titulo,
-        descricao: formData.descricao,
-        unidadeResponsavel: formData.unidadeResponsavel,
-        categoria: formData.categoria,
-        dataInicio: formData.dataInicio,
-        dataFim: formData.dataFim,
-        pgaRelacionado: formData.pgaRelacionado,
-        origemSolicitacao: formData.origemSolicitacao,
-        perguntas,
-        documentoReferencia: formData.documentoReferencia?.name || null
-      };
+      // Criar FormData para envio de arquivo
+      const formDataToSend = new FormData();
+      formDataToSend.append('titulo', formData.titulo);
+      formDataToSend.append('descricao', formData.descricao);
+      formDataToSend.append('unidadeResponsavel', formData.unidadeResponsavel);
+      formDataToSend.append('categoria', formData.categoria);
+      formDataToSend.append('dataInicio', formData.dataInicio);
+      formDataToSend.append('dataFim', formData.dataFim);
+      formDataToSend.append('pgaRelacionado', formData.pgaRelacionado);
+      formDataToSend.append('origemSolicitacao', formData.origemSolicitacao);
+      formDataToSend.append('perguntas', JSON.stringify(perguntas));
+      
+      if (formData.documentoReferencia) {
+        formDataToSend.append('documento', formData.documentoReferencia);
+      }
 
+      // Enviar para a API
       const response = await fetch('/api/consultas', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(consultaData)
+        body: formDataToSend
       });
       
       const result = await response.json();

@@ -1,23 +1,90 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
-export async function POST(request: NextRequest) {
+interface Consulta {
+  id: string;
+  titulo: FormDataEntryValue | null;
+  descricao: FormDataEntryValue | null;
+  unidadeResponsavel: FormDataEntryValue | null;
+  categoria: FormDataEntryValue | null;
+  dataInicio: FormDataEntryValue | null;
+  dataFim: FormDataEntryValue | null;
+  pgaRelacionado: FormDataEntryValue | null;
+  origemSolicitacao: FormDataEntryValue | null;
+  perguntas: any[];
+  status: string;
+  moderacao: string;
+  dataEnvio: string;
+  documentoReferencia: null;
+}
+
+interface DataStructure {
+  consultas: Consulta[];
+}
+
+export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const formData = await request.formData();
     
-    // Caminho para o arquivo data.json
-    const filePath = path.join(process.cwd(), 'src', 'data.json');
+    const consulta: Consulta = {
+      id: Date.now().toString(),
+      titulo: formData.get('titulo'),
+      descricao: formData.get('descricao'),
+      unidadeResponsavel: formData.get('unidadeResponsavel'),
+      categoria: formData.get('categoria'),
+      dataInicio: formData.get('dataInicio'),
+      dataFim: formData.get('dataFim'),
+      pgaRelacionado: formData.get('pgaRelacionado'),
+      origemSolicitacao: formData.get('origemSolicitacao'),
+      perguntas: JSON.parse(formData.get('perguntas') as string),
+      status: 'Pendente de Moderação',
+      moderacao: 'pendente',
+      dataEnvio: new Date().toISOString(),
+      documentoReferencia: null
+    };
+
+    // Read existing data
+    const dataFilePath = path.join(process.cwd(), 'src', 'data.json');
+    let existingData: DataStructure = { consultas: [] };
     
-    // Escrever os dados atualizados no arquivo
-    await fs.writeFile(filePath, JSON.stringify(body, null, 2));
-    
-    return NextResponse.json({ success: true });
+    try {
+      const fileContent = await fs.readFile(dataFilePath, 'utf-8');
+      existingData = JSON.parse(fileContent);
+    } catch (error) {
+      // If file doesn't exist, we'll create it
+      console.log('Creating new data file');
+    }
+
+    // Add new consulta
+    existingData.consultas = existingData.consultas || [];
+    existingData.consultas.push(consulta);
+
+    // Save back to file
+    await fs.writeFile(dataFilePath, JSON.stringify(existingData, null, 2));
+
+    return NextResponse.json({ success: true, message: 'Consulta criada com sucesso' });
   } catch (error) {
-    console.error('Erro ao salvar dados:', error);
+    console.error('Error saving consulta:', error);
     return NextResponse.json(
-      { error: 'Falha ao salvar os dados' },
+      { error: 'Erro ao salvar a consulta' },
       { status: 500 }
     );
   }
-} 
+}
+
+export async function GET() {
+  try {
+    const dataFilePath = path.join(process.cwd(), 'src', 'data.json');
+    const fileContent = await fs.readFile(dataFilePath, 'utf-8');
+    const data = JSON.parse(fileContent);
+    
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Error reading consultas:', error);
+    return NextResponse.json(
+      { error: 'Erro ao ler as consultas' },
+      { status: 500 }
+    );
+  }
+}

@@ -7,7 +7,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between">
         <div className="flex items-center">
           <Image
-            src="https://mocha-cdn.com/01969d54-984f-7da1-a509-6a81d2f2f617/image.png_6015.png"
+            src="/logo-mpap.png"
             alt="Ministério Público do Amapá"
             width={85}
             height={62}

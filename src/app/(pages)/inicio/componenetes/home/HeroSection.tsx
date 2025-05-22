@@ -1,44 +1,38 @@
 'use client';
 
-import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ConsultaType } from '@/app/types/consulta';
+import consultasData from '@/app/data.json'; // Importar diretamente o JSON
 
 export default function Home() {
-  const [consultasData, setConsultasData] = useState<ConsultaType[]>([]);
+  const [consultas, setConsultas] = useState<Record<string, ConsultaType>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchConsultas = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/consultas');
-        
-        if (!response.ok) {
-          throw new Error('Falha ao carregar consultas');
-        }
-        
-        const data = await response.json();
-        
-        // Ordenar consultas por data mais recente e pegar as 3 primeiras
-        const consultasRecentes = data
-          .sort((a: ConsultaType, b: ConsultaType) => 
-            new Date(b.dataEnvio).getTime() - new Date(a.dataEnvio).getTime()
-          )
-          .slice(0, 3);
-
-        setConsultasData(consultasRecentes);
-      } catch (err) {
-        console.error('Erro ao buscar consultas:', err);
-        setError('Não foi possível carregar as consultas. Tente novamente mais tarde.');
-      } finally {
-        setLoading(false);
+    try {
+      setLoading(true);
+      // Converter o array de consultas para o formato desejado
+      const consultasObj: Record<string, ConsultaType> = {};
+      
+      if (consultasData && consultasData.consultas) {
+        consultasData.consultas.forEach((consulta: ConsultaType) => {
+          if (consulta.id) {
+            consultasObj[consulta.id] = consulta;
+          }
+        });
       }
-    };
-
-    fetchConsultas();
+      
+      console.log('Dados carregados:', consultasObj);
+      setConsultas(consultasObj);
+    } catch (err) {
+      console.error('Erro ao carregar consultas:', err);
+      setError('Não foi possível carregar as consultas.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   return (
@@ -138,29 +132,25 @@ export default function Home() {
             <div className="text-center py-8 text-red-500">
               <p>{error}</p>
             </div>
-          ) : Array.isArray(consultasData) && consultasData.length === 0 ? (
+          ) : Object.keys(consultas).length === 0 ? (
             <div className="text-center py-8">
               <p>Nenhuma consulta disponível no momento.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {consultasData.map((consulta: ConsultaType) => (
-                <div key={consulta.id} className="bg-[#f0f2f5] rounded-lg overflow-hidden">
+              {Object.entries(consultas).slice(0, 3).map(([id, consulta]) => (
+                <div key={id} className="bg-[#f0f2f5] rounded-lg overflow-hidden">
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-2 text-[#0c2b7a]">{consulta.titulo}</h3>
                     <p className="text-sm text-gray-700 mb-4">
-                      {consulta.descricao?.substring(0, 100) || 'Descrição não disponível'}...
+                      {consulta.descricao.length > 100
+                        ? `${consulta.descricao.substring(0, 100)}...`
+                        : consulta.descricao}
                     </p>
                     <div className="text-sm text-gray-600 mb-3">
                       {consulta.unidadeResponsavel}
                     </div>
-                    <div className="text-xs text-gray-500 mb-2">
-                      {new Date(consulta.dataEnvio).toLocaleDateString('pt-BR')}
-                    </div>
-                    <Link 
-                      href={`/inicio/participante/consulta/${consulta.id}`} 
-                      className="text-[#0c2b7a] font-medium hover:underline"
-                    >
+                    <Link href={`/inicio/participante/consulta/${id}`} className="text-[#0c2b7a] font-medium hover:underline">
                       Participar →
                     </Link>
                   </div>

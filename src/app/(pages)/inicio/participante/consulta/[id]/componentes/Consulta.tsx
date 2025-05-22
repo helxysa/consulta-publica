@@ -42,6 +42,9 @@ export default function Consulta({ consultasData }: ConsultaProps) {
   const params = useParams();
   const id = params.id as string;
 
+  console.log('ID da consulta:', id); // Debug
+  console.log('Dados disponíveis:', consultasData); // Debug
+
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [cpfCnpj, setCpfCnpj] = useState('');
@@ -92,18 +95,19 @@ export default function Consulta({ consultasData }: ConsultaProps) {
   };
 
   // Buscar consulta em todas as categorias
-  const consulta = [
-    ...(consultasData.consultas || []),
-    ...(consultasData.consultasPendentes || []),
-    ...(consultasData.consultasRejeitadas || [])
-  ].find(c => c.id === id);
+  const consulta = consultasData.consultas.find(c => c.id === id);
+
+  console.log('Consulta encontrada:', consulta); // Debug
 
   if (!consulta) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 bg-white">
         <h1 className="text-2xl font-bold text-red-600 mb-4">Consulta não encontrada</h1>
         <p>A consulta que você está procurando não existe ou foi removida.</p>
-        <Link href="/inicio" className="inline-block mt-4 bg-[#0c2b7a] text-white font-medium py-3 px-8 rounded-md hover:bg-[#0a2468] transition text-base">
+        <Link 
+          href="/inicio/participante/consulta" 
+          className="inline-block mt-4 bg-[#0c2b7a] text-white font-medium py-3 px-8 rounded-md hover:bg-[#0a2468] transition text-base"
+        >
           Voltar para consultas
         </Link>
       </div>

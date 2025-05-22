@@ -6,7 +6,6 @@ const dataFilePath = path.join(process.cwd(), 'src', 'data.json');
 
 export async function POST(request: NextRequest) {
   try {
-    // Obter os dados da requisição
     const { id, decisao, motivoRejeicao } = await request.json();
 
     if (!id || !decisao || (decisao !== 'aprovada' && decisao !== 'rejeitada')) {
@@ -17,15 +16,15 @@ export async function POST(request: NextRequest) {
     const fileData = await fs.readFile(dataFilePath, 'utf8');
     const data = JSON.parse(fileData);
 
-    // Encontrar a consulta pendente pelo ID
-    const consultaIndex = data.consultasPendentes.findIndex((c: any) => c.id === id);
+    // Encontrar a consulta pelo ID no array principal de consultas
+    const consultaIndex = data.consultas.findIndex((c: any) => c.id === id);
 
     if (consultaIndex === -1) {
       return NextResponse.json({ error: 'Consulta não encontrada' }, { status: 404 });
     }
 
     // Obter a consulta
-    const consulta = data.consultasPendentes[consultaIndex];
+    const consulta = data.consultas[consultaIndex];
 
     // Atualizar o status de moderação
     consulta.moderacao = decisao;
@@ -36,35 +35,27 @@ export async function POST(request: NextRequest) {
     }
 
     if (decisao === 'aprovada') {
-      // Se aprovada, mover para a lista de consultas ativas
+      // Se aprovada, atualizar o status
       consulta.status = 'Ativa';
 
-      // Calcular dias restantes com base na data de fim
+      // Calcular dias restantes
       if (consulta.dataFim) {
         const hoje = new Date();
         const dataFim = new Date(consulta.dataFim);
         const diffTime = Math.abs(dataFim.getTime() - hoje.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         consulta.diasRestantes = diffDays;
-      } else {
-        consulta.diasRestantes = 30; // Valor padrão se não houver data de fim
       }
 
-      // Adicionar à lista de consultas ativas
-      data.consultas.push(consulta);
+      // Atualizar a consulta no array principal
+      data.consultas[consultaIndex] = consulta;
     } else if (decisao === 'rejeitada') {
-      // Se rejeitada, mover para a lista de consultas rejeitadas
-      // Criar a lista se não existir
-      if (!data.consultasRejeitadas) {
-        data.consultasRejeitadas = [];
-      }
-
-      // Adicionar à lista de consultas rejeitadas
-      data.consultasRejeitadas.push(consulta);
+      // Se rejeitada, atualizar o status
+      consulta.status = 'Rejeitada';
+      
+      // Atualizar a consulta no array principal
+      data.consultas[consultaIndex] = consulta;
     }
-
-    // Remover da lista de pendentes
-    data.consultasPendentes.splice(consultaIndex, 1);
 
     // Salvar o arquivo atualizado
     await fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), 'utf8');
@@ -72,7 +63,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: `Consulta ${decisao === 'aprovada' ? 'aprovada' : 'rejeitada'} com sucesso`
-    }, { status: 200 });
+    });
 
   } catch (error) {
     console.error('Erro ao processar moderação:', error);

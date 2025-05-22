@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 type Props = {
   activeTab: 'nova' | 'aprovadas' | 'rejeitadas' | 'pendentes';
   setActiveTab: (tab: 'nova' | 'aprovadas' | 'rejeitadas' | 'pendentes') => void;
@@ -7,30 +9,50 @@ type Props = {
 
 export default function Sidebar({ activeTab, setActiveTab }: Props) {
   return (
-    <div className="w-64 bg-white border-r border-gray-200 p-4">
-      <nav className="space-y-1">
-        <button
-          onClick={() => setActiveTab('nova')}
-          className={`w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium ${
-            activeTab === 'nova'
-              ? 'bg-blue-50 text-[#0c2b7a]'
-              : 'text-gray-600 hover:bg-gray-50'
-          }`}
+    <div className="w-56 bg-white border-r border-gray-200 h-full shadow-md">
+      <div className="p-4 border-b border-gray-200">
+        <h2 className="text-lg font-bold text-[#0c2b7a]">Minhas Consultas</h2>
+      </div>
+      <nav className="p-4">
+        <Link
+          href="/inicio"
+          className="flex items-center p-3 rounded-md transition-colors text-gray-700 hover:bg-gray-100 mb-4"
         >
-          Nova Consulta
-        </button>
-        
-        <div className="pt-2">
-          <div className="px-3 py-1 text-xs font-semibold text-gray-500">
-            Minhas Consultas
-          </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          <span>Voltar</span>
+        </Link>
+
+        <div className="space-y-2">
+          <button
+            onClick={() => setActiveTab('nova')}
+            className={`w-full flex items-center p-3 rounded-md transition-colors text-sm font-medium ${
+              activeTab === 'nova'
+                ? 'bg-[#0c2b7a] text-white'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            Nova Consulta
+          </button>
           
           <button
             onClick={() => setActiveTab('aprovadas')}
-            className={`w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium ${
+            className={`w-full flex items-center p-3 rounded-md transition-colors text-sm font-medium ${
               activeTab === 'aprovadas'
-                ? 'bg-blue-50 text-[#0c2b7a]'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-[#0c2b7a] text-white'
+                : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
             Consultas Aprovadas
@@ -38,10 +60,10 @@ export default function Sidebar({ activeTab, setActiveTab }: Props) {
           
           <button
             onClick={() => setActiveTab('rejeitadas')}
-            className={`w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium ${
+            className={`w-full flex items-center p-3 rounded-md transition-colors text-sm font-medium ${
               activeTab === 'rejeitadas'
-                ? 'bg-blue-50 text-[#0c2b7a]'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-[#0c2b7a] text-white'
+                : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
             Consultas Rejeitadas
@@ -49,10 +71,10 @@ export default function Sidebar({ activeTab, setActiveTab }: Props) {
           
           <button
             onClick={() => setActiveTab('pendentes')}
-            className={`w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium ${
+            className={`w-full flex items-center p-3 rounded-md transition-colors text-sm font-medium ${
               activeTab === 'pendentes'
-                ? 'bg-blue-50 text-[#0c2b7a]'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-[#0c2b7a] text-white'
+                : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
             Consultas Pendentes
