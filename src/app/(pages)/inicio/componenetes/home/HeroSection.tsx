@@ -6,6 +6,50 @@ import Link from 'next/link';
 import { ConsultaType } from '@/app/types/consulta';
 import consultasData from '@/app/data.json'; // Importar diretamente o JSON
 
+// MOCK: Consultas públicas
+export const consultasMock = [
+  {
+    id: '1',
+    titulo: 'Plano Municipal de Mobilidade Urbana',
+    descricao: 'Participe da construção do novo plano de mobilidade urbana para tornar a cidade mais acessível e sustentável.',
+    unidadeResponsavel: 'Secretaria de Mobilidade Urbana',
+    categoria: 'Transporte',
+    periodo: '01/07/2024 a 31/07/2024',
+  },
+  {
+    id: '2',
+    titulo: 'Consulta sobre Coleta Seletiva de Lixo',
+    descricao: 'Queremos ouvir a população sobre melhorias e expansão da coleta seletiva em todos os bairros.',
+    unidadeResponsavel: 'Secretaria de Meio Ambiente',
+    categoria: 'Meio Ambiente',
+    periodo: '10/07/2024 a 10/08/2024',
+  },
+  {
+    id: '3',
+    titulo: 'Revisão do Plano Diretor Urbano',
+    descricao: 'Dê sua opinião sobre o futuro do desenvolvimento urbano e zoneamento da cidade.',
+    unidadeResponsavel: 'Departamento de Planejamento Urbano',
+    categoria: 'Urbanismo',
+    periodo: '15/06/2024 a 15/07/2024',
+  },
+  {
+    id: '4',
+    titulo: 'Consulta Pública sobre Saúde Mental nas Escolas',
+    descricao: 'Ajude a definir políticas de apoio psicológico e prevenção nas escolas municipais.',
+    unidadeResponsavel: 'Secretaria de Educação',
+    categoria: 'Saúde',
+    periodo: '20/06/2024 a 20/07/2024',
+  },
+  {
+    id: '5',
+    titulo: 'Participação Social no Orçamento 2025',
+    descricao: 'Contribua com sugestões para a elaboração do orçamento municipal do próximo ano.',
+    unidadeResponsavel: 'Secretaria de Finanças',
+    categoria: 'Finanças Públicas',
+    periodo: '01/08/2024 a 31/08/2024',
+  },
+];
+
 export default function Home() {
   const [consultas, setConsultas] = useState<Record<string, ConsultaType>>({});
   const [loading, setLoading] = useState(true);
@@ -124,40 +168,32 @@ export default function Home() {
             </Link>
           </div>
 
-          {loading ? (
-            <div className="text-center py-8">
-              <p>Carregando consultas...</p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-8 text-red-500">
-              <p>{error}</p>
-            </div>
-          ) : Object.keys(consultas).length === 0 ? (
-            <div className="text-center py-8">
-              <p>Nenhuma consulta disponível no momento.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {Object.entries(consultas).slice(0, 3).map(([id, consulta]) => (
-                <div key={id} className="bg-[#f0f2f5] rounded-lg overflow-hidden">
-                  <div className="p-4">
-                    <h3 className="font-bold text-lg mb-2 text-[#0c2b7a]">{consulta.titulo}</h3>
-                    <p className="text-sm text-gray-700 mb-4">
-                      {consulta.descricao.length > 100
-                        ? `${consulta.descricao.substring(0, 100)}...`
-                        : consulta.descricao}
-                    </p>
-                    <div className="text-sm text-gray-600 mb-3">
-                      {consulta.unidadeResponsavel}
-                    </div>
-                    <Link href={`/inicio/participante/consulta/${id}`} className="text-[#0c2b7a] font-medium hover:underline">
-                      Participar →
-                    </Link>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {consultasMock.map((consulta) => (
+              <div key={consulta.id} className="bg-[#f0f2f5] rounded-lg overflow-hidden">
+                <div className="p-4">
+                  <h3 className="font-bold text-lg mb-2 text-[#0c2b7a]">{consulta.titulo}</h3>
+                  <p className="text-sm text-gray-700 mb-4">
+                    {consulta.descricao.length > 100
+                      ? `${consulta.descricao.substring(0, 100)}...`
+                      : consulta.descricao}
+                  </p>
+                  <div className="text-sm text-gray-600 mb-1">
+                    <span className="font-medium">Unidade:</span> {consulta.unidadeResponsavel}
                   </div>
+                  <div className="text-sm text-gray-600 mb-1">
+                    <span className="font-medium">Categoria:</span> {consulta.categoria}
+                  </div>
+                  <div className="text-sm text-gray-600 mb-3">
+                    <span className="font-medium">Período:</span> {consulta.periodo}
+                  </div>
+                  <Link href={`/inicio/participante/consulta/${consulta.id}`} className="text-[#0c2b7a] font-medium hover:underline">
+                    Participar →
+                  </Link>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

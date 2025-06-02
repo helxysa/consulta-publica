@@ -3,21 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import dadosJson from '@/app/data.json'; // Renomeado para evitar conflito
+import { Contribuicao } from '@/app/types/consulta';
 
 // Definindo os tipos baseados na estrutura do data.json
-type Contribuicao = {
-  id: string;
-  consultaId: string;
-  nome: string;
-  email: string;
-  cpfCnpj: string;
-  data: string;
-  contribuicao: string;
-  respostas: {
-    [key: string]: string;
-  };
-};
-
 type ConsultaType = {
   id: string;
   titulo: string;
@@ -52,22 +40,20 @@ export default function ConsultasPage() {
     try {
       setLoading(true);
       
-      // Acessar corretamente os dados do JSON
-      console.log('Dados brutos:', dadosJson); // Debug
-      
-      // Verificar se existem consultas e filtrar as aprovadas
+      // Carregar todas as consultas sem filtro inicial
       const todasConsultas = dadosJson.consultas || [];
-      console.log('Todas consultas:', todasConsultas); // Debug
       
-      const consultasAprovadas = todasConsultas.filter(
-        (consulta: ConsultaType) => consulta.moderacao === 'aprovada'
-      );
+      // Adicionar log para debug
+      console.log('Todas as consultas:', todasConsultas);
       
-      console.log('Consultas aprovadas:', consultasAprovadas); // Debug
-      setConsultasData(consultasAprovadas);
+      // Remover o filtro de moderação aqui, já que todas as consultas no data.json já são aprovadas
+      setConsultasData(todasConsultas);
       
-      // Setar contribuições
-      setContribuicoes(dadosJson.contribuicoes || []);
+      // Setar contribuições com status padrão se não existir
+      setContribuicoes((dadosJson.contribuicoes || []).map((c: any) => ({
+        ...c,
+        status: c.status || 'pendente'
+      })));
       
     } catch (err) {
       console.error('Erro ao carregar dados:', err);
@@ -77,12 +63,10 @@ export default function ConsultasPage() {
     }
   }, []);
 
-  // Contar contribuições para cada consulta
   const contarContribuicoes = (consultaId: string) => {
     return contribuicoes.filter(c => c.consultaId === consultaId).length;
   };
 
-  // Filtrar consultas com base nos filtros selecionados
   const consultasFiltradas = consultasData.filter(consulta => {
     console.log('Filtrando consulta:', consulta); // Debug
     return (
@@ -113,7 +97,6 @@ export default function ConsultasPage() {
         <h1 className="text-2xl font-bold text-[#0c2b7a]">Consultas Públicas</h1>
       </div>
 
-      {/* Filtros */}
       <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
         <div className="flex items-center mb-4">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

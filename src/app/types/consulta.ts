@@ -20,4 +20,21 @@ export interface ConsultaType {
   moderacao: string;
 }
 
+// Adicionar este tipo
+export type ContribuicaoStatus = 'pendente' | 'aprovada' | 'rejeitada';
+
+export type Contribuicao = {
+  id: string;
+  consultaId: string;
+  nome: string;
+  email: string;
+  cpfCnpj: string;
+  data: string;
+  contribuicao: string;
+  respostas: {
+    [key: string]: string;
+  };
+  status: 'pendente' | 'aprovada' | 'rejeitada';
+};
+
 

@@ -19,55 +19,55 @@ interface Consulta {
   documentoReferencia: null;
 }
 
+interface Contribuicao {
+  id: string;
+  consultaId: string;
+  nome: string;
+  email: string;
+  cpfCnpj: string;
+  data: string;
+  contribuicao: string;
+  respostas: { [key: string]: string };
+}
+
 interface DataStructure {
-  consultas: Consulta[];
+  consultas: any[];
+  contribuicoes: Contribuicao[];
+  usuarios: any[];
 }
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
+    const body = await request.json();
     
-    const consulta: Consulta = {
-      id: Date.now().toString(),
-      titulo: formData.get('titulo'),
-      descricao: formData.get('descricao'),
-      unidadeResponsavel: formData.get('unidadeResponsavel'),
-      categoria: formData.get('categoria'),
-      dataInicio: formData.get('dataInicio'),
-      dataFim: formData.get('dataFim'),
-      pgaRelacionado: formData.get('pgaRelacionado'),
-      origemSolicitacao: formData.get('origemSolicitacao'),
-      perguntas: JSON.parse(formData.get('perguntas') as string),
-      status: 'Pendente de Moderação',
-      moderacao: 'pendente',
-      dataEnvio: new Date().toISOString(),
-      documentoReferencia: null
-    };
-
-    // Read existing data
     const dataFilePath = path.join(process.cwd(), 'src', 'data.json');
-    let existingData: DataStructure = { consultas: [] };
+    let existingData: DataStructure = { 
+      consultas: [],
+      contribuicoes: [],
+      usuarios: []
+    };
     
     try {
       const fileContent = await fs.readFile(dataFilePath, 'utf-8');
       existingData = JSON.parse(fileContent);
     } catch (error) {
-      // If file doesn't exist, we'll create it
-      console.log('Creating new data file');
+      console.log('Criando novo arquivo de dados');
     }
 
-    // Add new consulta
-    existingData.consultas = existingData.consultas || [];
-    existingData.consultas.push(consulta);
+    // Mesclar dados
+    const updatedData = {
+      consultas: body.consultas || existingData.consultas,
+      contribuicoes: body.contribuicoes || existingData.contribuicoes,
+      usuarios: body.usuarios || existingData.usuarios
+    };
 
-    // Save back to file
-    await fs.writeFile(dataFilePath, JSON.stringify(existingData, null, 2));
+    await fs.writeFile(dataFilePath, JSON.stringify(updatedData, null, 2));
 
-    return NextResponse.json({ success: true, message: 'Consulta criada com sucesso' });
+    return NextResponse.json({ success: true, message: 'Dados salvos com sucesso' });
   } catch (error) {
-    console.error('Error saving consulta:', error);
+    console.error('Erro ao salvar dados:', error);
     return NextResponse.json(
-      { error: 'Erro ao salvar a consulta' },
+      { error: 'Erro ao salvar os dados' },
       { status: 500 }
     );
   }

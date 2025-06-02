@@ -1,17 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import Consulta from './componentes/Consulta';
-import consultasData from '@/app/data.json'; // Importar diretamente o data.json
+import { consultasMock } from '@/app/(pages)/inicio/componenetes/home/HeroSection';
 
 export default function ConsultaPage() {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(false);
-  }, []);
-
-  if (loading) return <div className="p-8 text-center">Carregando...</div>;
-
-  return <Consulta consultasData={consultasData} />;
+  const params = useParams();
+  const id = params?.id as string;
+  const consulta = consultasMock.find(c => c.id === id);
+  return <Consulta consulta={consulta} id={id} />;
 }
